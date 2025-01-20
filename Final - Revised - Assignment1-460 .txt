@@ -1,0 +1,319 @@
+.. code:: ipython3
+
+    pip install pulp
+
+
+.. parsed-literal::
+
+    Defaulting to user installation because normal site-packages is not writeable
+    Looking in links: /usr/share/pip-wheels
+    Requirement already satisfied: pulp in ./.local/lib/python3.10/site-packages (2.9.0)
+    Note: you may need to restart the kernel to use updated packages.
+
+
+.. code:: ipython3
+
+    from pulp import LpProblem, LpMinimize, LpVariable, lpSum, value
+
+Standard Form of the Linear Programming Problem
+===============================================
+
+--------------
+
+**Decision Variables**
+----------------------
+
+-  **servings Whole Grain Pasta**: Number of servings of Whole Grain
+   Pasta per day (≥ 0)
+-  **servings Traditional Pasta Sauce**: Number of servings of
+   Traditional Pasta Sauce per day (≥ 0)
+-  **servings White Rice**: Number of servings of White Rice per day (≥
+   0)
+-  **servings Ground Turkey**: Number of servings of Ground Turkey per
+   day (≥ 0)
+-  **servings Oikos Triple Zero Nonfat Greek Yogurt**: Number of
+   servings of Oikos Triple Zero Nonfat Greek Yogurt per day (≥ 0)
+
+--------------
+
+**Objective Function**
+----------------------
+
+Minimize the total weekly cost:
+
+**Z = 7 × (0.25 × servings Whole Grain Pasta + 0.56 × servings
+Traditional Pasta Sauce + 0.14 × servings White Rice + 1.87 × servings
+Ground Turkey + 1.49 × servings Oikos Triple Zero Nonfat Greek Yogurt)**
+
+--------------
+
+**Constraints**
+---------------
+
+**1. Weekly Sodium Constraint**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**7 × (0.0 × servings Whole Grain Pasta + 0.47 × servings Traditional
+Pasta Sauce + 0.0 × servings White Rice + 0.085 × servings Ground Turkey
++ 0.06 × servings Oikos Triple Zero Nonfat Greek Yogurt) ≤ 35**
+
+**2. Weekly Energy Constraint**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**7 × (180 × servings Whole Grain Pasta + 70 × servings Traditional
+Pasta Sauce + 160 × servings White Rice + 120 × servings Ground Turkey +
+90 × servings Oikos Triple Zero Nonfat Greek Yogurt) ≥ 14,000**
+
+**3. Weekly Protein Constraint**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**7 × (8 × servings Whole Grain Pasta + 2 × servings Traditional Pasta
+Sauce + 3 × servings White Rice + 27 × servings Ground Turkey + 15 ×
+servings Oikos Triple Zero Nonfat Greek Yogurt) ≥ 350**
+
+**4. Weekly Vitamin D Constraint**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**7 × (0.0 × servings Whole Grain Pasta + 0.0 × servings Traditional
+Pasta Sauce + 0.0 × servings White Rice + 0.0 × servings Ground Turkey +
+0.000002 × servings Oikos Triple Zero Nonfat Greek Yogurt) ≥ 0.00014**
+
+**5. Weekly Calcium Constraint**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**7 × (0.017 × servings Whole Grain Pasta + 0.03 × servings Traditional
+Pasta Sauce + 0.0 × servings White Rice + 0.003 × servings Ground Turkey
++ 0.13 × servings Oikos Triple Zero Nonfat Greek Yogurt) ≥ 9.1**
+
+**6. Weekly Iron Constraint**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**7 × (0.002 × servings Whole Grain Pasta + 0.0008 × servings
+Traditional Pasta Sauce + 0.001 × servings White Rice + 0.001 × servings
+Ground Turkey + 0.0 × servings Oikos Triple Zero Nonfat Greek Yogurt) ≥
+0.126**
+
+**7. Weekly Potassium Constraint**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**7 × (0.274 × servings Whole Grain Pasta + 0.33 × servings Traditional
+Pasta Sauce + 0.05 × servings White Rice + 0.27 × servings Ground Turkey
++ 0.188 × servings Oikos Triple Zero Nonfat Greek Yogurt) ≥ in Revised
+Program (Part 4) 32.9**
+
+--------------
+
+**Additional Constraints**
+--------------------------
+
+-  Minimum of 1 serving per day for each food item:
+
+   -  **servings Whole Grain Pasta ≥ 1**
+   -  **servings Traditional Pasta Sauce ≥ 1**
+   -  **servings White Rice ≥ 1**
+   -  **servings Ground Turkey ≥ 1**
+   -  \**s
+
+iple_Zero_Nonfat_Greek_Yogurt ≥ 1\`
+
+**Problem** The focus of this linear programming problem is to identify
+the optimal cost of a weekly diet while meeting the weekly nutritional
+requirements of the Food & Drug Administration (FDA).
+``servings_Ground_Turkey ≥ 1`` -
+``servings_Oikos_Triple_Zero_Nonfat_Greek_Yogurt ≥ 1`` round_Turkey >= 1
+# servings_Oikos_Triple_Zero_Nonfat_Greek_Yogurt >= 1
+
+.. code:: ipython3
+
+    # everything is measured in grams, calories, and dollars ($) respectively. Each 
+    # food item is inputted here in the data dictionary I manually submitted
+    
+    diet = {
+        "Whole Grain Pasta": {
+            "Serving Size": 56,
+            "Energy": 180,
+            "Cost": 0.25,
+            "Sodium": 0.0,
+            "Protein": 8.0,
+            "Vitamin D": 0.0,
+            "Calcium": 0.017,
+            "Iron": 0.002,
+            "Potassium": 0.274
+        },
+        "Traditional Pasta Sauce": {
+            "Serving Size": 136,
+            "Energy": 70,
+            "Cost": 0.56,
+            "Sodium": 0.47,
+            "Protein": 2.0,
+            "Vitamin D": 0.0,
+            "Calcium": 0.03,
+            "Iron": 0.0008,
+            "Potassium": 0.33
+        },
+        "White Rice": {
+            "Serving Size": 45,
+            "Energy": 160,
+            "Cost": 0.14,
+            "Sodium": 0.0,
+            "Protein": 3.0,
+            "Vitamin D": 0.0,
+            "Calcium": 0.0,
+            "Iron": 0.001,
+            "Potassium": 0.05
+        },
+        "Ground Turkey": {
+            "Serving Size": 112,
+            "Energy": 120,
+            "Cost": 1.87,
+            "Sodium": 0.085,
+            "Protein": 27.0,
+            "Vitamin D": 0.0,
+            "Calcium": 0.003,
+            "Iron": 0.001,
+            "Potassium": 0.27
+        },
+        "Oikos Triple Zero Nonfat Greek Yogurt": {
+            "Serving Size": 150,
+            "Energy": 90,
+            "Cost": 1.49,
+            "Sodium": 0.06,
+            "Protein": 15.0,
+            "Vitamin D": 0.000002,
+            "Calcium": 0.13,
+            "Iron": 0.0,
+            "Potassium": 0.188
+        }
+    }
+
+.. code:: ipython3
+
+    # Constraints added as a dictionary below
+    # Each constraint in the constraint data dictionary is converted to grams
+    # and is set at the daily amount, not weekly here
+    
+    constraints = {
+        "Sodium (g)": {"max": 5},
+        "Energy (calories)": {"min": 2000},
+        "Protein (g)": {"min": 50},
+        "Vitamin D (g)": {"min": 0.00002},
+        "Calcium (g)": {"min": 1.3},
+        "Iron (g)": {"min": 0.018},
+        "Potassium (g)": {"min": 4.7}
+    }
+
+.. code:: ipython3
+
+    # Here is the problem created and structured
+    
+    diet_problem = LpProblem("Weekly_Diet_Optimization", LpMinimize)
+
+.. code:: ipython3
+
+    # Defining the decision variables with a lowbound of 0 so there aren't negative outcomes. Referenced 
+    
+    servings = {food: LpVariable(f"servings_{food.replace(' ', '_')}", lowBound=0) for food in diet}
+
+.. code:: ipython3
+
+    # My objective function is to minimize cost weekly and nothing else
+    # The weekly amount is calculated into the linear program here and is marked for it
+    
+    diet_problem += lpSum(diet[food]["Cost"] * servings[food] * 7 for food in diet), "Total Weekly Cost"
+
+.. code:: ipython3
+
+    # My weekly nutritional constraints outlined based on the constraints dictionary coded above
+    # I used the data dictionary for the diet and the constraints for each
+    
+    diet_problem += lpSum(diet[food]["Sodium"] * servings[food] * 7 for food in diet) <= constraints["Sodium (g)"]["max"] * 7, "Max Sodium"
+    diet_problem += lpSum(diet[food]["Energy"] * servings[food] * 7 for food in diet) >= constraints["Energy (calories)"]["min"] * 7, "Min Energy"
+    diet_problem += lpSum(diet[food]["Protein"] * servings[food] * 7 for food in diet) >= constraints["Protein (g)"]["min"] * 7, "Min Protein"
+    diet_problem += lpSum(diet[food]["Vitamin D"] * servings[food] * 7 for food in diet) >= constraints["Vitamin D (g)"]["min"] * 7, "Min Vitamin D"
+    diet_problem += lpSum(diet[food]["Calcium"] * servings[food] * 7 for food in diet) >= constraints["Calcium (g)"]["min"] * 7, "Min Calcium"
+    diet_problem += lpSum(diet[food]["Iron"] * servings[food] * 7 for food in diet) >= constraints["Iron (g)"]["min"] * 7, "Min Iron"
+    diet_problem += lpSum(diet[food]["Potassium"] * servings[food] * 7 for food in diet) >= constraints["Potassium (g)"]["min"] * 7, "Min Potassium"
+
+.. code:: ipython3
+
+    # Adding a constraint that each food item must have at least 1 serving per day
+    
+    for food in servings:
+        diet_problem += servings[food] >= 1, f"Min_1_serving_{food.replace(' ', '_')}"
+
+.. code:: ipython3
+
+    # Solve the problem 
+    
+    diet_problem.solve()
+
+
+.. parsed-literal::
+
+    Welcome to the CBC MILP Solver 
+    Version: 2.10.3 
+    Build Date: Dec 15 2019 
+    
+    command line - /home/f8775c58-d163-4b87-8e62-21cb8778715b/.local/lib/python3.10/site-packages/pulp/solverdir/cbc/linux/64/cbc /tmp/7545af2581494a939ea5922cadb96274-pulp.mps -timeMode elapsed -branch -printingOptions all -solution /tmp/7545af2581494a939ea5922cadb96274-pulp.sol (default strategy 1)
+    At line 2 NAME          MODEL
+    At line 3 ROWS
+    At line 17 COLUMNS
+    At line 55 RHS
+    At line 68 BOUNDS
+    At line 69 ENDATA
+    Problem MODEL has 12 rows, 5 columns and 32 elements
+    Coin0008I MODEL read with 0 errors
+    Option for timeMode changed from cpu to elapsed
+    Presolve 4 (-8) rows, 5 (0) columns and 17 (-15) elements
+    0  Obj 124.04 Primal inf 15.512118 (3)
+    2  Obj 136.14949
+    Optimal - objective value 136.14949
+    After Postsolve, objective 136.14949, infeasibilities - dual 0 (0), primal 0 (0)
+    Optimal objective 136.1494891 - 2 iterations time 0.002, Presolve 0.00
+    Option for printingOptions changed from normal to all
+    Total time (CPU seconds):       0.00   (Wallclock seconds):       0.01
+    
+
+
+
+
+.. parsed-literal::
+
+    1
+
+
+
+.. code:: ipython3
+
+    # Since I have an optimal outcome, printing results with more details
+    
+    print("Optimal Servings Per Day:")
+    for food in servings:
+        print(f"{food}: {servings[food].varValue:.2f} servings")
+
+
+.. parsed-literal::
+
+    Optimal Servings Per Day:
+    Whole Grain Pasta: 7.92 servings
+    Traditional Pasta Sauce: 1.00 servings
+    White Rice: 1.00 servings
+    Ground Turkey: 1.00 servings
+    Oikos Triple Zero Nonfat Greek Yogurt: 10.00 servings
+
+
+.. code:: ipython3
+
+    # Here's the minimum cost solution outcome
+    
+    minimum_weekly_cost = value(diet_problem.objective)
+    print(f"\nTotal Minimum Weekly Cost: ${minimum_weekly_cost:.2f}")
+
+
+.. parsed-literal::
+
+    
+    Total Minimum Weekly Cost: $136.15
+
+
+

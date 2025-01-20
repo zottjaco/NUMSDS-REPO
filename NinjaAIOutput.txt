@@ -1,0 +1,115 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "c3285246-f162-45ad-a7fd-69717fa2dc34",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Welcome to the CBC MILP Solver \n",
+      "Version: 2.10.3 \n",
+      "Build Date: Dec 15 2019 \n",
+      "\n",
+      "command line - /home/f8775c58-d163-4b87-8e62-21cb8778715b/.local/lib/python3.10/site-packages/pulp/solverdir/cbc/linux/64/cbc /tmp/343641d280094fa8b61da40b59791fc8-pulp.mps -max -timeMode elapsed -branch -printingOptions all -solution /tmp/343641d280094fa8b61da40b59791fc8-pulp.sol (default strategy 1)\n",
+      "At line 2 NAME          MODEL\n",
+      "At line 3 ROWS\n",
+      "At line 12 COLUMNS\n",
+      "At line 53 RHS\n",
+      "At line 61 BOUNDS\n",
+      "At line 62 ENDATA\n",
+      "Problem MODEL has 7 rows, 5 columns and 35 elements\n",
+      "Coin0008I MODEL read with 0 errors\n",
+      "Option for timeMode changed from cpu to elapsed\n",
+      "Presolve 7 (0) rows, 5 (0) columns and 35 (0) elements\n",
+      "0  Obj -0 Primal inf 626.10082 (6) Dual inf 1.3757058 (5)\n",
+      "0  Obj -0 Primal inf 626.10082 (6) Dual inf 1.3391852e+11 (5)\n",
+      "2  Obj 5215\n",
+      "Optimal - objective value 5215\n",
+      "Optimal objective 5215 - 2 iterations time 0.002\n",
+      "Option for printingOptions changed from normal to all\n",
+      "Total time (CPU seconds):       0.00   (Wallclock seconds):       0.01\n",
+      "\n",
+      "Optimal solution found.\n",
+      "Whole Grain Pasta: 0.0\n",
+      "Traditional Pasta Sauce: 0.0\n",
+      "White Rice: 0.0\n",
+      "Ground Turkey: 0.0\n",
+      "Oikos Triple Zero Nonfat Greek Yogurt: 3500.0\n"
+     ]
+    }
+   ],
+   "source": [
+    "from pulp import LpMaximize, LpProblem, lpSum, LpVariable\n",
+    "\n",
+    "# Create the model\n",
+    "model = LpProblem(name=\"diet-problem\", sense=LpMaximize)\n",
+    "\n",
+    "# Initialize the variables\n",
+    "whole_grain_pasta = LpVariable(name=\"whole_grain_pasta\", lowBound=0)\n",
+    "traditional_pasta_sauce = LpVariable(name=\"traditional_pasta_sauce\", lowBound=0)\n",
+    "white_rice = LpVariable(name=\"white_rice\", lowBound=0)\n",
+    "ground_turkey = LpVariable(name=\"ground_turkey\", lowBound=0)\n",
+    "oikos_triple_zero_nonfat_greek_yogurt = LpVariable(name=\"oikos_triple_zero_nonfat_greek_yogurt\", lowBound=0)\n",
+    "\n",
+    "# Objective function\n",
+    "model += lpSum([0.25 * whole_grain_pasta, 0.56 * traditional_pasta_sauce, 0.14 * white_rice, 1.87 * ground_turkey, 1.49 * oikos_triple_zero_nonfat_greek_yogurt])\n",
+    "\n",
+    "# Constraints\n",
+    "model += lpSum([180 * whole_grain_pasta, 70 * traditional_pasta_sauce, 160 * white_rice, 120 * ground_turkey, 90 * oikos_triple_zero_nonfat_greek_yogurt]) >= 14000\n",
+    "model += lpSum([10 * whole_grain_pasta, 2 * traditional_pasta_sauce, 2 * white_rice, 25 * ground_turkey, 15 * oikos_triple_zero_nonfat_greek_yogurt]) >= 350\n",
+    "model += lpSum([0.001 * whole_grain_pasta, 0.001 * traditional_pasta_sauce, 0.001 * white_rice, 0.001 * ground_turkey, 0.001 * oikos_triple_zero_nonfat_greek_yogurt]) >= 0.14\n",
+    "model += lpSum([0.02 * whole_grain_pasta, 0.01 * traditional_pasta_sauce, 0.01 * white_rice, 0.02 * ground_turkey, 0.2 * oikos_triple_zero_nonfat_greek_yogurt]) >= 9.1\n",
+    "model += lpSum([0.002 * whole_grain_pasta, 0.002 * traditional_pasta_sauce, 0.002 * white_rice, 0.01 * ground_turkey, 0.002 * oikos_triple_zero_nonfat_greek_yogurt]) >= 0.126\n",
+    "model += lpSum([0.2 * whole_grain_pasta, 0.4 * traditional_pasta_sauce, 0.1 * white_rice, 0.3 * ground_turkey, 0.4 * oikos_triple_zero_nonfat_greek_yogurt]) >= 32.9\n",
+    "model += lpSum([0.005 * whole_grain_pasta, 0.01 * traditional_pasta_sauce, 0.001 * white_rice, 0.02 * ground_turkey, 0.01 * oikos_triple_zero_nonfat_greek_yogurt]) <= 35\n",
+    "\n",
+    "# Solve the problem\n",
+    "status = model.solve()\n",
+    "\n",
+    "# Print the results\n",
+    "if status == 1:\n",
+    "    print(\"Optimal solution found.\")\n",
+    "    print(\"Whole Grain Pasta:\", whole_grain_pasta.value())\n",
+    "    print(\"Traditional Pasta Sauce:\", traditional_pasta_sauce.value())\n",
+    "    print(\"White Rice:\", white_rice.value())\n",
+    "    print(\"Ground Turkey:\", ground_turkey.value())\n",
+    "    print(\"Oikos Triple Zero Nonfat Greek Yogurt:\", oikos_triple_zero_nonfat_greek_yogurt.value())\n",
+    "else:\n",
+    "    print(\"No optimal solution found.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a805c04d-a7ad-43fb-8ca8-4a9764b6ca9b",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "anaconda-2024.02-py310",
+   "language": "python",
+   "name": "conda-env-anaconda-2024.02-py310-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.14"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
