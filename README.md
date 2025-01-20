@@ -12,8 +12,6 @@ This study is conducted to determine the cheapest weekly spend on five packaged 
   - [NinjaAIOutput.txt](#ninjaaioutputtxt)
   - [part3assignment1.py](#part3assignment1py)
   - [part4assignment1.py](#part4assignment1py)
-- [Usage](#usage)
-- [Technologies Used](#technologies-used)
 - [License](#license)
 
 ## Files
